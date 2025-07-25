@@ -1,13 +1,13 @@
 {
-  "name": "gemini-cli-vscode-ide-companion",
-  "displayName": "Gemini CLI Companion",
-  "description": "Enable Gemini CLI with direct access to your VS Code workspace.",
+  "name": "next-mavens-cli-vscode-ide-companion",
+  "displayName": "Next Mavens CLI Companion",
+  "description": "Enable Next Mavens CLI with direct access to your VS Code workspace.",
   "version": "99.99.99",
-  "publisher": "google",
+  "publisher": "nextmavens",
   "icon": "assets/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/google-gemini/gemini-cli.git",
+    "url": "https://github.com/nextmavens/cli.git",
     "directory": "packages/vscode-ide-companion"
   },
   "engines": {
@@ -19,10 +19,10 @@
     "AI"
   ],
   "keywords": [
-    "gemini-cli",
-    "gemini cli",
-    "gemini",
-    "gemini code",
+    "next-mavens-cli",
+    "next mavens cli",
+    "next mavens",
+    "next mavens code",
     "cli",
     "ide integration",
     "ide companion"

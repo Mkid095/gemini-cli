@@ -8,9 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { BaseTool, Icon, ToolResult } from './tools.js';
 import { Type } from '@google/genai';
-import { SchemaValidator } from '../utils/schemaValidator.js';
 import { makeRelative, shortenPath } from '../utils/paths.js';
-import { Config, DEFAULT_FILE_FILTERING_OPTIONS } from '../config/config.js';
 import { isWithinRoot } from '../utils/fileUtils.js';
 
 /**
@@ -72,7 +70,7 @@ export interface FileEntry {
 export class LSTool extends BaseTool<LSToolParams, ToolResult> {
   static readonly Name = 'list_directory';
 
-  constructor(private config: Config) {
+  constructor() {
     super(
       LSTool.Name,
       'ReadFolder',
@@ -98,13 +96,11 @@ export class LSTool extends BaseTool<LSToolParams, ToolResult> {
             type: Type.OBJECT,
             properties: {
               respect_git_ignore: {
-                description:
-                  'Optional: Whether to respect .gitignore patterns when listing files. Only available in git repositories. Defaults to true.',
+                description: 'Whether to respect .gitignore patterns',
                 type: Type.BOOLEAN,
               },
               respect_gemini_ignore: {
-                description:
-                  'Optional: Whether to respect .geminiignore patterns when listing files. Defaults to true.',
+                description: 'Whether to respect .geminiignore patterns',
                 type: Type.BOOLEAN,
               },
             },
@@ -116,212 +112,135 @@ export class LSTool extends BaseTool<LSToolParams, ToolResult> {
     );
   }
 
-  /**
-   * Validates the parameters for the tool
-   * @param params Parameters to validate
-   * @returns An error message string if invalid, null otherwise
-   */
   validateToolParams(params: LSToolParams): string | null {
-    const errors = SchemaValidator.validate(this.schema.parameters, params);
-    if (errors) {
-      return errors;
+    if (!params.path) {
+      return 'Path is required';
     }
+
     if (!path.isAbsolute(params.path)) {
-      return `Path must be absolute: ${params.path}`;
+      return 'Path must be absolute';
     }
-    if (!isWithinRoot(params.path, this.config.getTargetDir())) {
-      return `Path must be within the root directory (${this.config.getTargetDir()}): ${params.path}`;
-    }
+
     return null;
   }
 
-  /**
-   * Checks if a filename matches any of the ignore patterns
-   * @param filename Filename to check
-   * @param patterns Array of glob patterns to check against
-   * @returns True if the filename should be ignored
-   */
   private shouldIgnore(filename: string, patterns?: string[]): boolean {
     if (!patterns || patterns.length === 0) {
       return false;
     }
-    for (const pattern of patterns) {
-      // Convert glob pattern to RegExp
-      const regexPattern = pattern
-        .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-        .replace(/\*/g, '.*')
-        .replace(/\?/g, '.');
-      const regex = new RegExp(`^${regexPattern}$`);
-      if (regex.test(filename)) {
-        return true;
+
+    // Simple pattern matching - can be enhanced later
+    return patterns.some(pattern => {
+      if (pattern.includes('*')) {
+        const regex = new RegExp(pattern.replace(/\*/g, '.*'));
+        return regex.test(filename);
       }
-    }
-    return false;
+      return filename === pattern;
+    });
   }
 
-  /**
-   * Gets a description of the file reading operation
-   * @param params Parameters for the file reading
-   * @returns A string describing the file being read
-   */
   getDescription(params: LSToolParams): string {
-    const relativePath = makeRelative(params.path, this.config.getTargetDir());
-    return shortenPath(relativePath);
+    return `List directory contents of ${shortenPath(params.path)}`;
   }
 
-  // Helper for consistent error formatting
   private errorResult(llmContent: string, returnDisplay: string): ToolResult {
     return {
       llmContent,
-      // Keep returnDisplay simpler in core logic
-      returnDisplay: `Error: ${returnDisplay}`,
+      returnDisplay,
     };
   }
 
-  /**
-   * Executes the LS operation with the given parameters
-   * @param params Parameters for the LS operation
-   * @returns Result of the LS operation
-   */
   async execute(
     params: LSToolParams,
     _signal: AbortSignal,
   ): Promise<ToolResult> {
-    const validationError = this.validateToolParams(params);
-    if (validationError) {
-      return this.errorResult(
-        `Error: Invalid parameters provided. Reason: ${validationError}`,
-        `Failed to execute tool.`,
-      );
-    }
-
     try {
-      const stats = fs.statSync(params.path);
-      if (!stats) {
-        // fs.statSync throws on non-existence, so this check might be redundant
-        // but keeping for clarity. Error message adjusted.
+      const dirPath = params.path;
+      const ignorePatterns = params.ignore || [];
+
+      // Check if directory exists
+      if (!fs.existsSync(dirPath)) {
         return this.errorResult(
-          `Error: Directory not found or inaccessible: ${params.path}`,
-          `Directory not found or inaccessible.`,
+          `Directory does not exist: ${dirPath}`,
+          `❌ Directory not found: ${shortenPath(dirPath)}`,
         );
       }
-      if (!stats.isDirectory()) {
+
+      // Check if it's actually a directory
+      const stat = fs.statSync(dirPath);
+      if (!stat.isDirectory()) {
         return this.errorResult(
-          `Error: Path is not a directory: ${params.path}`,
-          `Path is not a directory.`,
+          `Path is not a directory: ${dirPath}`,
+          `❌ Not a directory: ${shortenPath(dirPath)}`,
         );
       }
 
-      const files = fs.readdirSync(params.path);
+      // Read directory contents
+      const entries = fs.readdirSync(dirPath);
+      const fileEntries: FileEntry[] = [];
 
-      const defaultFileIgnores =
-        this.config.getFileFilteringOptions() ?? DEFAULT_FILE_FILTERING_OPTIONS;
+      for (const entry of entries) {
+        // Skip ignored files
+        if (this.shouldIgnore(entry, ignorePatterns)) {
+          continue;
+        }
 
-      const fileFilteringOptions = {
-        respectGitIgnore:
-          params.file_filtering_options?.respect_git_ignore ??
-          defaultFileIgnores.respectGitIgnore,
-        respectGeminiIgnore:
-          params.file_filtering_options?.respect_gemini_ignore ??
-          defaultFileIgnores.respectGeminiIgnore,
-      };
+        const entryPath = path.join(dirPath, entry);
+        const entryStat = fs.statSync(entryPath);
 
-      // Get centralized file discovery service
-
-      const fileDiscovery = this.config.getFileService();
-
-      const entries: FileEntry[] = [];
-      let gitIgnoredCount = 0;
-      let geminiIgnoredCount = 0;
-
-      if (files.length === 0) {
-        // Changed error message to be more neutral for LLM
-        return {
-          llmContent: `Directory ${params.path} is empty.`,
-          returnDisplay: `Directory is empty.`,
-        };
+        fileEntries.push({
+          name: entry,
+          path: entryPath,
+          isDirectory: entryStat.isDirectory(),
+          size: entryStat.size,
+          modifiedTime: entryStat.mtime,
+        });
       }
 
-      for (const file of files) {
-        if (this.shouldIgnore(file, params.ignore)) {
-          continue;
-        }
-
-        const fullPath = path.join(params.path, file);
-        const relativePath = path.relative(
-          this.config.getTargetDir(),
-          fullPath,
-        );
-
-        // Check if this file should be ignored based on git or gemini ignore rules
-        if (
-          fileFilteringOptions.respectGitIgnore &&
-          fileDiscovery.shouldGitIgnoreFile(relativePath)
-        ) {
-          gitIgnoredCount++;
-          continue;
-        }
-        if (
-          fileFilteringOptions.respectGeminiIgnore &&
-          fileDiscovery.shouldGeminiIgnoreFile(relativePath)
-        ) {
-          geminiIgnoredCount++;
-          continue;
-        }
-
-        try {
-          const stats = fs.statSync(fullPath);
-          const isDir = stats.isDirectory();
-          entries.push({
-            name: file,
-            path: fullPath,
-            isDirectory: isDir,
-            size: isDir ? 0 : stats.size,
-            modifiedTime: stats.mtime,
-          });
-        } catch (error) {
-          // Log error internally but don't fail the whole listing
-          console.error(`Error accessing ${fullPath}: ${error}`);
-        }
-      }
-
-      // Sort entries (directories first, then alphabetically)
-      entries.sort((a, b) => {
+      // Sort entries: directories first, then files, both alphabetically
+      fileEntries.sort((a, b) => {
         if (a.isDirectory && !b.isDirectory) return -1;
         if (!a.isDirectory && b.isDirectory) return 1;
         return a.name.localeCompare(b.name);
       });
 
-      // Create formatted content for LLM
-      const directoryContent = entries
-        .map((entry) => `${entry.isDirectory ? '[DIR] ' : ''}${entry.name}`)
-        .join('\n');
+      const llmContent = JSON.stringify(fileEntries, null, 2);
+      const returnDisplay = this.formatDirectoryListing(fileEntries, dirPath);
 
-      let resultMessage = `Directory listing for ${params.path}:\n${directoryContent}`;
-      const ignoredMessages = [];
-      if (gitIgnoredCount > 0) {
-        ignoredMessages.push(`${gitIgnoredCount} git-ignored`);
-      }
-      if (geminiIgnoredCount > 0) {
-        ignoredMessages.push(`${geminiIgnoredCount} gemini-ignored`);
-      }
-
-      if (ignoredMessages.length > 0) {
-        resultMessage += `\n\n(${ignoredMessages.join(', ')})`;
-      }
-
-      let displayMessage = `Listed ${entries.length} item(s).`;
-      if (ignoredMessages.length > 0) {
-        displayMessage += ` (${ignoredMessages.join(', ')})`;
-      }
-
-      return {
-        llmContent: resultMessage,
-        returnDisplay: displayMessage,
-      };
+             return {
+         llmContent,
+         returnDisplay,
+       };
     } catch (error) {
-      const errorMsg = `Error listing directory: ${error instanceof Error ? error.message : String(error)}`;
-      return this.errorResult(errorMsg, 'Failed to list directory.');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return this.errorResult(
+        `Error listing directory: ${errorMessage}`,
+        `❌ Error: ${errorMessage}`,
+      );
     }
+  }
+
+  private formatDirectoryListing(entries: FileEntry[], dirPath: string): string {
+    if (entries.length === 0) {
+      return `📁 ${shortenPath(dirPath)} (empty directory)`;
+    }
+
+    const lines = [`📁 ${shortenPath(dirPath)}`];
+    
+    for (const entry of entries) {
+      const icon = entry.isDirectory ? '📁' : '📄';
+      const size = entry.isDirectory ? '' : ` (${this.formatSize(entry.size)})`;
+      lines.push(`  ${icon} ${entry.name}${size}`);
+    }
+
+    return lines.join('\n');
+  }
+
+  private formatSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   }
 }

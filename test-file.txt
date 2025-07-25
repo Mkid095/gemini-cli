@@ -1,0 +1,8 @@
+Hello! This is a test file for Next Mavens CLI.
+
+This file contains:
+- Some sample text
+- Multiple lines
+- To test file reading functionality
+
+The agent should be able to read this file when you ask it to. 

@@ -194,7 +194,7 @@ This is the most critical stage where files are moved and transformed into their
 2.  The JavaScript Bundle is Created:
     - What happens: The built JavaScript from both packages/core/dist and packages/cli/dist are bundled into a single,
       executable JavaScript file.
-    - File movement: packages/cli/dist/index.js + packages/core/dist/index.js -> (bundled by esbuild) -> `bundle`/gemini.js (or a
+    - File movement: packages/cli/dist/index.js + packages/core/dist/index.js -> (bundled by esbuild) -> `bundle`/next-mavens.js (or a
       similar name).
     - Why: This creates a single, optimized file that contains all the necessary application code. It simplifies the package
       by removing the need for the core package to be a separate dependency on NPM, as its code is now included directly.
@@ -277,4 +277,4 @@ This tells NPM that any folder inside the `packages` directory is a separate pac
 
 - **Simplified Dependency Management**: Running `npm install` from the root of the project will install all dependencies for all packages in the workspace and link them together. This means you don't need to run `npm install` in each package's directory.
 - **Automatic Linking**: Packages within the workspace can depend on each other. When you run `npm install`, NPM will automatically create symlinks between the packages. This means that when you make changes to one package, the changes are immediately available to other packages that depend on it.
-- **Simplified Script Execution**: You can run scripts in any package from the root of the project using the `--workspace` flag. For example, to run the `build` script in the `cli` package, you can run `npm run build --workspace @google/gemini-cli`.
+- **Simplified Script Execution**: You can run scripts in any package from the root of the project using the `--workspace` flag. For example, to run the `build` script in the `cli` package, you can run `npm run build --workspace @nextmavens/cli`.

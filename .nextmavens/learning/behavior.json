@@ -1,0 +1,28 @@
+{
+  "preferredCommands": [],
+  "commonWorkflows": [],
+  "errorPatterns": [],
+  "successPatterns": [],
+  "timeOfDay": [
+    [
+      "8:00",
+      2
+    ]
+  ],
+  "sessionDuration": 0,
+  "projectTypes": [
+    "typescript"
+  ],
+  "learningStyle": "interactive",
+  "expertiseLevel": "intermediate",
+  "userPreferences": {
+    "responseStyle": "detailed",
+    "preferredLanguage": "en",
+    "autoSave": true,
+    "showExplanations": true,
+    "learningMode": true,
+    "codeStyle": "functional",
+    "testingPreference": "tdd",
+    "documentationStyle": "comprehensive"
+  }
+}

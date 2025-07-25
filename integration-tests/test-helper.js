@@ -21,7 +21,7 @@ function sanitizeTestName(name) {
 
 export class TestRig {
   constructor() {
-    this.bundlePath = join(__dirname, '..', 'bundle/gemini.js');
+    this.bundlePath = join(__dirname, '..', 'bundle/next-mavens.js');
     this.testDir = null;
   }
 

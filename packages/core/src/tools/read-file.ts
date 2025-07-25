@@ -4,21 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import fs from 'fs';
 import path from 'path';
-import { SchemaValidator } from '../utils/schemaValidator.js';
 import { makeRelative, shortenPath } from '../utils/paths.js';
 import { BaseTool, Icon, ToolLocation, ToolResult } from './tools.js';
 import { Type } from '@google/genai';
 import {
-  isWithinRoot,
   processSingleFileContent,
   getSpecificMimeType,
 } from '../utils/fileUtils.js';
-import { Config } from '../config/config.js';
-import {
-  recordFileOperationMetric,
-  FileOperation,
-} from '../telemetry/metrics.js';
 
 /**
  * Parameters for the ReadFile tool
@@ -46,7 +40,7 @@ export interface ReadFileToolParams {
 export class ReadFileTool extends BaseTool<ReadFileToolParams, ToolResult> {
   static readonly Name: string = 'read_file';
 
-  constructor(private config: Config) {
+  constructor() {
     super(
       ReadFileTool.Name,
       'ReadFile',
@@ -77,18 +71,15 @@ export class ReadFileTool extends BaseTool<ReadFileToolParams, ToolResult> {
   }
 
   validateToolParams(params: ReadFileToolParams): string | null {
-    const errors = SchemaValidator.validate(this.schema.parameters, params);
-    if (errors) {
-      return errors;
+    if (!params.absolute_path) {
+      return 'File path is required';
     }
 
     const filePath = params.absolute_path;
     if (!path.isAbsolute(filePath)) {
       return `File path must be absolute, but was relative: ${filePath}. You must provide an absolute path.`;
     }
-    if (!isWithinRoot(filePath, this.config.getTargetDir())) {
-      return `File path must be within the root directory (${this.config.getTargetDir()}): ${filePath}`;
-    }
+
     if (params.offset !== undefined && params.offset < 0) {
       return 'Offset must be a non-negative number';
     }
@@ -96,75 +87,67 @@ export class ReadFileTool extends BaseTool<ReadFileToolParams, ToolResult> {
       return 'Limit must be a positive number';
     }
 
-    const fileService = this.config.getFileService();
-    if (fileService.shouldGeminiIgnoreFile(params.absolute_path)) {
-      return `File path '${filePath}' is ignored by .geminiignore pattern(s).`;
-    }
-
     return null;
   }
 
   getDescription(params: ReadFileToolParams): string {
-    if (
-      !params ||
-      typeof params.absolute_path !== 'string' ||
-      params.absolute_path.trim() === ''
-    ) {
-      return `Path unavailable`;
-    }
-    const relativePath = makeRelative(
-      params.absolute_path,
-      this.config.getTargetDir(),
-    );
-    return shortenPath(relativePath);
+    const relativePath = makeRelative(params.absolute_path, process.cwd());
+    return `Read file: ${shortenPath(relativePath)}`;
   }
 
   toolLocations(params: ReadFileToolParams): ToolLocation[] {
-    return [{ path: params.absolute_path, line: params.offset }];
+    return [{ path: params.absolute_path }];
   }
 
   async execute(
     params: ReadFileToolParams,
     _signal: AbortSignal,
   ): Promise<ToolResult> {
-    const validationError = this.validateToolParams(params);
-    if (validationError) {
+    try {
+      const filePath = params.absolute_path;
+
+      // Check if file exists
+      if (!fs.existsSync(filePath)) {
+        return {
+          llmContent: `File not found: ${filePath}`,
+          returnDisplay: `❌ File not found: ${shortenPath(filePath)}`,
+        };
+      }
+
+      // Check if it's actually a file
+      const stat = fs.statSync(filePath);
+      if (!stat.isFile()) {
+        return {
+          llmContent: `Path is not a file: ${filePath}`,
+          returnDisplay: `❌ Not a file: ${shortenPath(filePath)}`,
+        };
+      }
+
+      // Get file info
+      const mimeType = getSpecificMimeType(filePath);
+      const fileSize = stat.size;
+
+      // Process file content based on type
+      const content = await processSingleFileContent(
+        filePath,
+        process.cwd(),
+        params.offset,
+        params.limit,
+      );
+
+      const llmContent = content.llmContent;
+      const returnDisplay = `📄 ${shortenPath(filePath)} (${fileSize} bytes)`;
+
       return {
-        llmContent: `Error: Invalid parameters provided. Reason: ${validationError}`,
-        returnDisplay: validationError,
+        llmContent,
+        returnDisplay,
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return {
+        llmContent: `Error reading file: ${errorMessage}`,
+        returnDisplay: `❌ Error: ${errorMessage}`,
       };
     }
-
-    const result = await processSingleFileContent(
-      params.absolute_path,
-      this.config.getTargetDir(),
-      params.offset,
-      params.limit,
-    );
-
-    if (result.error) {
-      return {
-        llmContent: result.error, // The detailed error for LLM
-        returnDisplay: result.returnDisplay, // User-friendly error
-      };
-    }
-
-    const lines =
-      typeof result.llmContent === 'string'
-        ? result.llmContent.split('\n').length
-        : undefined;
-    const mimetype = getSpecificMimeType(params.absolute_path);
-    recordFileOperationMetric(
-      this.config,
-      FileOperation.READ,
-      lines,
-      mimetype,
-      path.extname(params.absolute_path),
-    );
-
-    return {
-      llmContent: result.llmContent,
-      returnDisplay: result.returnDisplay,
-    };
   }
 }

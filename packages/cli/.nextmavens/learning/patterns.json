@@ -1,0 +1,191 @@
+{
+  "Analyze my codebase and suggest improvements": {
+    "id": "pattern_1753390253692_gvlq44tkq",
+    "pattern": "Analyze my codebase and suggest improvements",
+    "type": "workflow",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-24T20:51:21.593Z",
+    "confidence": 0.5599999998218983,
+    "adaptations": []
+  },
+  "hello can you check my codebase": {
+    "id": "pattern_1753390253716_igeicdbwy",
+    "pattern": "hello can you check my codebase",
+    "type": "workflow",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-24T20:51:42.345Z",
+    "confidence": 0.56,
+    "adaptations": []
+  },
+  "hello who are you?": {
+    "id": "pattern_1753417456697_l9i7abr0p",
+    "pattern": "hello who are you?",
+    "type": "workflow",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-25T04:24:16.717Z",
+    "confidence": 0.56,
+    "adaptations": []
+  },
+  "hell": {
+    "id": "pattern_1753417759945_7a5m09xcg",
+    "pattern": "hell",
+    "type": "workflow",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-25T04:29:20.008Z",
+    "confidence": 0.56,
+    "adaptations": []
+  },
+  "what do you understand about my codebase?": {
+    "id": "pattern_1753418460411_mkndqs8zh",
+    "pattern": "what do you understand about my codebase?",
+    "type": "workflow",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-25T04:43:00.998Z",
+    "confidence": 0.56,
+    "adaptations": []
+  },
+  "s": {
+    "id": "pattern_1753419207430_fzkko36a2",
+    "pattern": "s",
+    "type": "workflow",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-25T04:53:35.694Z",
+    "confidence": 0.56,
+    "adaptations": []
+  },
+  "- Could you provide more details about the programming language or technology you're working with?": {
+    "id": "pattern_1753419207453_c3vsjgls9",
+    "pattern": "- Could you provide more details about the programming language or technology you're working with?",
+    "type": "workflow",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-25T04:54:01.680Z",
+    "confidence": 0.56,
+    "adaptations": []
+  }
+}

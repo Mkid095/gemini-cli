@@ -1,0 +1,56 @@
+{
+  "can you read what is in my codebase?": {
+    "id": "pattern_1753419977580_jxh6gp88g",
+    "pattern": "can you read what is in my codebase?",
+    "type": "file_operation",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-25T05:06:38.508Z",
+    "confidence": 0.56,
+    "adaptations": []
+  },
+  "what do you understnad about my project give me a summery of what I already have": {
+    "id": "pattern_1753420053165_cg3fd3ubj",
+    "pattern": "what do you understnad about my project give me a summery of what I already have",
+    "type": "file_operation",
+    "frequency": 2,
+    "successRate": 0.5,
+    "context": {
+      "projectType": "unknown",
+      "language": "unknown",
+      "fileTypes": [],
+      "commonCommands": [],
+      "errorPatterns": [],
+      "userPreferences": {
+        "responseStyle": "detailed",
+        "preferredLanguage": "en",
+        "autoSave": true,
+        "showExplanations": true,
+        "learningMode": true,
+        "codeStyle": "functional",
+        "testingPreference": "tdd",
+        "documentationStyle": "comprehensive"
+      }
+    },
+    "lastUsed": "2025-07-25T05:07:58.297Z",
+    "confidence": 0.56,
+    "adaptations": []
+  }
+}

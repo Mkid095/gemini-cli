@@ -1,25 +1,23 @@
-# Gemini CLI
+# Next Mavens CLI
 
-[![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
+[![Next Mavens CLI CI](https://github.com/nextmavens/cli/actions/workflows/ci.yml/badge.svg)](https://github.com/nextmavens/cli/actions/workflows/ci.yml)
 
-![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
+![Next Mavens CLI Screenshot](./docs/assets/next-mavens-screenshot.png)
 
-This repository contains the Gemini CLI, a command-line AI workflow tool that connects to your
-tools, understands your code and accelerates your workflows.
+This repository contains the Next Mavens CLI, a command-line AI workflow tool that connects to your
+local LLM services, understands your code and accelerates your workflows.
 
-With the Gemini CLI you can:
+With the Next Mavens CLI you can:
 
-- Query and edit large codebases in and beyond Gemini's 1M token context window.
-- Generate new apps from PDFs or sketches, using Gemini's multimodal capabilities.
+- Query and edit large codebases using local LLM models with extensive context windows.
+- Generate new apps from PDFs or sketches, using local multimodal capabilities.
 - Automate operational tasks, like querying pull requests or handling complex rebases.
-- Use tools and MCP servers to connect new capabilities, including [media generation with Imagen,
-  Veo or Lyria](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
-- Ground your queries with the [Google Search](https://ai.google.dev/gemini-api/docs/grounding)
-  tool, built into Gemini.
+- Use tools and MCP servers to connect new capabilities with your local development environment.
+- Work entirely offline with your own local LLM models through LM Studio and Ollama integration.
 
 ## Quickstart
 
-You have two options to install Gemini CLI.
+You have two options to install Next Mavens CLI.
 
 ### With Node
 
@@ -27,13 +25,13 @@ You have two options to install Gemini CLI.
 2. **Run the CLI:** Execute the following command in your terminal:
 
    ```bash
-   npx https://github.com/google-gemini/gemini-cli
+   npx https://github.com/nextmavens/cli
    ```
 
    Or install it with:
 
    ```bash
-   npm install -g @google/gemini-cli
+   npm install -g @nextmavens/cli
    ```
 
    Then, run the CLI from anywhere:
@@ -48,69 +46,61 @@ You have two options to install Gemini CLI.
 2. **Install the CLI** Execute the following command in your terminal:
 
    ```bash
-   brew install gemini-cli
+   brew install next-mavens-cli
    ```
 
    Then, run the CLI from anywhere:
 
    ```bash
-   gemini
+   next-mavens
    ```
 
 ### Common Configuration steps
 
 3. **Pick a color theme**
-4. **Authenticate:** When prompted, sign in with your personal Google account. This will grant you up to 60 model requests per minute and 1,000 model requests per day using Gemini.
+4. **Configure Local Models:** When prompted, the CLI will help you set up connections to your local LLM services (LM Studio or Ollama). No external API keys or authentication required.
 
-You are now ready to use the Gemini CLI!
+You are now ready to use the Next Mavens CLI!
 
-### Use a Gemini API key:
+### Use Local LLM Services:
 
-The Gemini API provides a free tier with [100 requests per day](https://ai.google.dev/gemini-api/docs/rate-limits#free-tier) using Gemini 2.5 Pro, control over which model you use, and access to higher rate limits (with a paid plan):
+Next Mavens CLI works with local LLM services, providing complete privacy and no usage limits:
 
-1. Generate a key from [Google AI Studio](https://aistudio.google.com/apikey).
-2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key.
+#### LM Studio Setup:
+1. Download and install [LM Studio](https://lmstudio.ai/)
+2. Download your preferred models through the LM Studio interface
+3. Start the local server in LM Studio (typically runs on http://localhost:1234)
+4. Next Mavens CLI will automatically detect and connect to your LM Studio instance
 
-   ```bash
-   export GEMINI_API_KEY="YOUR_API_KEY"
-   ```
+#### Ollama Setup:
+1. Download and install [Ollama](https://ollama.ai/)
+2. Pull your preferred models using: `ollama pull llama2` (or any other model)
+3. Start Ollama service (typically runs on http://localhost:11434)
+4. Next Mavens CLI will automatically detect and connect to your Ollama instance
 
-3. (Optionally) Upgrade your Gemini API project to a paid plan on the API key page (will automatically unlock [Tier 1 rate limits](https://ai.google.dev/gemini-api/docs/rate-limits#tier-1))
-
-### Use a Vertex AI API key:
-
-The Vertex AI API provides a [free tier](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) using express mode for Gemini 2.5 Pro, control over which model you use, and access to higher rate limits with a billing account:
-
-1. Generate a key from [Google Cloud](https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys).
-2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key and set GOOGLE_GENAI_USE_VERTEXAI to true
-
-   ```bash
-   export GOOGLE_API_KEY="YOUR_API_KEY"
-   export GOOGLE_GENAI_USE_VERTEXAI=true
-   ```
-
-3. (Optionally) Add a billing account on your project to get access to [higher usage limits](https://cloud.google.com/vertex-ai/generative-ai/docs/quotas)
+#### Legacy Cloud API Support:
+For backward compatibility, you can still use cloud APIs by setting environment variables, but local models are recommended for better privacy and performance.
 
 For other authentication methods, including Google Workspace accounts, see the [authentication](./docs/cli/authentication.md) guide.
 
 ## Examples
 
-Once the CLI is running, you can start interacting with Gemini from your shell.
+Once the CLI is running, you can start interacting with your local LLM models from your shell.
 
 You can start a project from a new directory:
 
 ```sh
 cd new-project/
-gemini
-> Write me a Gemini Discord bot that answers questions using a FAQ.md file I will provide
+next-mavens
+> Write me a Discord bot that answers questions using a FAQ.md file I will provide
 ```
 
 Or work with an existing project:
 
 ```sh
-git clone https://github.com/google-gemini/gemini-cli
-cd gemini-cli
-gemini
+git clone https://github.com/nextmavens/cli
+cd cli
+next-mavens
 > Give me a summary of all of the changes that went in yesterday
 ```
 
@@ -132,7 +122,7 @@ having issues.
 
 ### Explore a new codebase
 
-Start by `cd`ing into an existing or newly-cloned repository and running `gemini`.
+Start by `cd`ing into an existing or newly-cloned repository and running `next-mavens`.
 
 ```text
 > Describe the main pieces of this system's architecture.
@@ -180,4 +170,4 @@ Head over to the [Uninstall](docs/Uninstall.md) guide for uninstallation instruc
 
 ## Terms of Service and Privacy Notice
 
-For details on the terms of service and privacy notice applicable to your use of Gemini CLI, see the [Terms of Service and Privacy Notice](./docs/tos-privacy.md).
+For details on the terms of service and privacy notice applicable to your use of Next Mavens CLI, see the [Terms of Service and Privacy Notice](./docs/tos-privacy.md).

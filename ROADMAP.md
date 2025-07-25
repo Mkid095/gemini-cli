@@ -1,13 +1,13 @@
-# Gemini CLI Roadmap
+# Next Mavens CLI Roadmap
 
-The [Official Gemini CLI Roadmap](https://github.com/orgs/google-gemini/projects/11/)
+The [Official Next Mavens CLI Roadmap](https://github.com/orgs/nextmavens/projects/11/)
 
-Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
+Next Mavens CLI is an open-source AI agent that brings the power of local LLM models directly into your terminal. It provides lightweight access to your local AI models, giving you the most direct path from your prompt to your preferred model.
 
-This document outlines our approach to the Gemini CLI roadmap. Here, you'll find our guiding principles and a breakdown of the key areas we are
+This document outlines our approach to the Next Mavens CLI roadmap. Here, you'll find our guiding principles and a breakdown of the key areas we are
 focused on for development. Our roadmap is not a static list but a dynamic set of priorities that are tracked live in our GitHub Issues.
 
-As an [Apache 2.0 open source project](https://github.com/google-gemini/gemini-cli?tab=Apache-2.0-1-ov-file#readme), we appreciate and welcome [public contributions](https://github.com/google-gemini/gemini-cli/blob/main/CONTRIBUTING.md), and will give first priority to those contributions aligned with our roadmap. If you want to propose a new feature or change to our roadmap, please start by [opening an issue for discussion](https://github.com/google-gemini/gemini-cli/issues/new/choose).
+As an [Apache 2.0 open source project](https://github.com/nextmavens/cli?tab=Apache-2.0-1-ov-file#readme), we appreciate and welcome [public contributions](https://github.com/nextmavens/cli/blob/main/CONTRIBUTING.md), and will give first priority to those contributions aligned with our roadmap. If you want to propose a new feature or change to our roadmap, please start by [opening an issue for discussion](https://github.com/nextmavens/cli/issues/new/choose).
 
 ## Disclaimer
 
@@ -17,14 +17,15 @@ This roadmap represents our current thinking and is for informational purposes o
 
 Our development is guided by the following principles:
 
-- **Power & Simplicity:** Deliver access to state-of-the-art Gemini models with an intuitive and easy-to-use lightweight command-line interface.
+- **Power & Simplicity:** Deliver access to state-of-the-art local LLM models with an intuitive and easy-to-use lightweight command-line interface.
+- **Privacy & Local-First:** Prioritize local model execution for complete privacy and offline capabilities while maintaining compatibility with cloud services.
 - **Extensibility:** An adaptable agent to help you with a variety of use cases and environments along with the ability to run these agents anywhere.
-- **Intelligent:** Gemini CLI should be reliably ranked among the best agentic tools as measured by benchmarks like SWE Bench, Terminal Bench, and CSAT.
+- **Intelligent:** Next Mavens CLI should be reliably ranked among the best agentic tools as measured by benchmarks like SWE Bench, Terminal Bench, and CSAT.
 - **Free and Open Source:** Foster a thriving open source community where cost isn’t a barrier to personal use, and PRs get merged quickly. This means resolving and closing issues, pull requests, and discussion posts quickly.
 
 ## How the Roadmap Works
 
-Our roadmap is managed directly through Github Issues. See our entry point Roadmap Issue [here](https://github.com/google-gemini/gemini-cli/issues/4191). This approach allows for transparency and gives you a direct way to learn more or get involved with any specific initiative. All our roadmap items will be tagged as Type:`Feature` and Label:`maintainer` for features we are actively working on, or Type:`Task` and Label:`maintainer` for a more detailed list of tasks.
+Our roadmap is managed directly through Github Issues. See our entry point Roadmap Issue [here](https://github.com/nextmavens/cli/issues/4191). This approach allows for transparency and gives you a direct way to learn more or get involved with any specific initiative. All our roadmap items will be tagged as Type:`Feature` and Label:`maintainer` for features we are actively working on, or Type:`Task` and Label:`maintainer` for a more detailed list of tasks.
 
 Issues are organized to provide key information at a glance:
 
@@ -32,7 +33,7 @@ Issues are organized to provide key information at a glance:
 - **Feature Area:** Labels such as `area/model` or `area/tooling` categorizes the work.
 - **Issue Type:** _Workstream_ => _Epics_ => _Features_ => _Tasks|Bugs_
 
-To see what we're working on, you can filter our issues by these dimensions. See all our items [here](https://github.com/orgs/google-gemini/projects/11/views/19)
+To see what we're working on, you can filter our issues by these dimensions. See all our items [here](https://github.com/orgs/nextmavens/projects/11/views/19)
 
 ## Focus Areas
 
